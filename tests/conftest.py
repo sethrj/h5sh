@@ -6,7 +6,7 @@ import h5py
 import numpy as np
 
 @pytest.fixture
-def example_h5_file(tmpdir):
+def example_h5_filename(tmpdir, scope='module'):
     ext_filename = (tmpdir / "example-data-external.h5")
     filename = (tmpdir / "example-data.h5")
 
@@ -31,6 +31,5 @@ def example_h5_file(tmpdir):
         f['subsubgroup_hardlink'] = g3
         f['extlink'] = h5py.ExternalLink(ext_filename, "external_ds")
         f['extgroup'] = h5py.ExternalLink(ext_filename, "external_group")
-        yield f
 
-    print("Closing file", filename)
+    yield filename
