@@ -1,8 +1,5 @@
-###############################################################################
-# File  : Nemesis/python/exnihilotools/h5sh/console.py
-# Author: Seth R Johnson
-# Date  : Thu Jun 01 11:02:29 2017
-###############################################################################
+# -*- coding: utf-8 -*-
+
 from __future__ import (division, absolute_import, print_function, )
 from six.moves import input
 #-----------------------------------------------------------------------------#
@@ -116,6 +113,3 @@ class Console(object):
                     print("{}: {!s}".format(cmd_name, e))
                     continue
 
-###############################################################################
-# end of Nemesis/python/exnihilotools/h5sh/console.py
-###############################################################################

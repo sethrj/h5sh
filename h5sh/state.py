@@ -1,8 +1,5 @@
-###############################################################################
-# File  : Nemesis/python/exnihilotools/h5sh/state.py
-# Author: Seth R Johnson
-# Date  : Wed May 31 14:23:00 2017
-###############################################################################
+# -*- coding: utf-8 -*-
+
 from __future__ import (division, absolute_import, print_function, )
 #-----------------------------------------------------------------------------#
 from contextlib import contextmanager

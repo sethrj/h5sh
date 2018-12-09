@@ -1,8 +1,5 @@
-###############################################################################
-# File  : Nemesis/python/exnihilotools/h5sh/commands.py
-# Author: Seth R Johnson
-# Date  : Thu Jun 01 11:09:20 2017
-###############################################################################
+# -*- coding: utf-8 -*-
+
 from __future__ import (division, absolute_import, print_function, )
 #-----------------------------------------------------------------------------#
 from argparse import ArgumentParser
@@ -246,8 +243,8 @@ pwd.description = "Print the path to the current HDF5 group"
 
 class Up(object):
     def __init__(self, count):
-        self.name = "u" + "p"*count
-        self.path = "../"*count
+        self.name = "u" + "p" * count
+        self.path = "../" * count
         self.description = "Traverse up {:d} directories".format(count)
 
     def __call__(self, state):
@@ -319,8 +316,10 @@ class Dump(Command):
                             action="store_true")
         parser.add_argument('-p', '--precision', type=int, default=4,
                             help="Floating point precision")
-        parser.add_argument('--suppress',
-                            help="Print very small numbers as zero", action="store_true")
+        parser.add_argument(
+            '--suppress',
+            help="Print very small numbers as zero",
+            action="store_true")
         parser.add_argument('dataset', help="Dataset to print")
         parser.add_argument('-o', '--out',
                             help="File to save output",
@@ -392,8 +391,9 @@ class Attrs(Command):
     name = "attr"
 
     def build_parser(self):
-        parser = MiniArgParser(prog=self.name,
-                               description="Print attributes of the current group")
+        parser = MiniArgParser(
+            prog=self.name,
+            description="Print attributes of the current group")
         return parser
 
     def execute(self, state, daughter=None):
@@ -472,6 +472,3 @@ def prompt(state, text=None):
 
 prompt.description = "Get or change the terminal prompt"
 
-###############################################################################
-# end of Nemesis/python/exnihilotools/h5sh/commands.py
-###############################################################################

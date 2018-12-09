@@ -1,8 +1,5 @@
-###############################################################################
-# File  : Nemesis/python/exnihilotools/h5sh/utils.py
-# Author: Seth R Johnson
-# Date  : Thu Jun 01 11:35:04 2017
-###############################################################################
+# -*- coding: utf-8 -*-
+
 from __future__ import (division, absolute_import, print_function, )
 from six import PY3
 #-----------------------------------------------------------------------------#
@@ -281,6 +278,3 @@ if not h5py:
 
     def extract(data): return data
 
-###############################################################################
-# end of Nemesis/python/exnihilotools/h5sh/utils.py
-###############################################################################
