@@ -1,21 +1,19 @@
-###############################################################################
-# File  : Nemesis/python/test/test_h5sh_commands.py
-# Author: Seth R Johnson
-# Date  : Fri Jun 02 11:34:18 2017
-###############################################################################
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from __future__ import (division, absolute_import, print_function, )
 #-----------------------------------------------------------------------------#
 from contextlib import contextmanager
 import numpy as np
 import h5py
 
-import exnihilotools.unittest as unittest
-from exnihilotools.files import stdout_string
+import unittest as unittest
+#from exnihilotools.files import stdout_string
 ###############################################################################
-from exnihilotools.h5sh.state import State
-import exnihilotools.h5sh.commands as module
+from h5sh.state import State
+import h5sh.commands as module
 
-FILENAME = unittest.test_data_path("Nemesis/python", "example-data.h5")
+#FILENAME = unittest.test_data_path("Nemesis/python", "example-data.h5")
 
 class TestCommands(unittest.TestCase):
 
@@ -153,6 +151,3 @@ Type         : int32
 if __name__ == '__main__':
     unittest.main()
 
-###############################################################################
-# end of Nemesis/python/test/test_h5sh_commands.py
-###############################################################################
