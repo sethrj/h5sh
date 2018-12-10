@@ -161,22 +161,41 @@ def format_shape(shape):
         return "scalar"
     return _MULT_SYMBOL.join(str(i) for i in shape)
 
+def items(group):
+    """Generator for key/value pairs in a group, returning links where
+    possible.
 
-def short_describe(item):
+    The only returned link types are External or Soft. Hard links are opened
+    and the corresponding item is returned.
+    """
+    for key in group:
+        value = group.get(key, getlink=True)
+        if isinstance(value, h5py.HardLink):
+            # Get the actual corresponding dataset or group
+            value = group[key]
+        yield (key, value)
+
+def short_describe(obj):
     """Return a short description of the given group/dataset.
     """
-    if isinstance(item, h5py.Group):
-        return "Group ({:d} items)".format(len(item))
-    elif isinstance(item, h5py.Dataset):
+    if isinstance(obj, h5py.Group):
+        return "Group ({:d} item{:s})".format(len(obj),
+                "s" if len(obj) != 1 else "")
+    elif isinstance(obj, h5py.Dataset):
         return "Dataset ({:s}: {:s})".format(
-            item.dtype.char, format_shape(item.shape))
-    elif isinstance(item, h5py.SoftLink):
-        return "Link ({:s})".format(item.path)
-    elif isinstance(item, h5py.ExternalLink):
-        return "Link ({:s}:{:s})".format(item.filename, item.path)
+            obj.dtype.char, format_shape(obj.shape))
+    elif isinstance(obj, h5py.SoftLink):
+        return "Link ({:s})".format(obj.path)
+    elif isinstance(obj, h5py.ExternalLink):
+        filename = obj.filename
+        if os.path.isabs(filename):
+            filename = os.path.sep.join(['...', os.path.basename(filename)])
+        return "Link ({:s}:{:s})".format(filename, obj.path)
+    elif isinstance(obj, h5py.HardLink):
+        return "Object"
     else:
         # Unknown
-        return str(item.__class__)
+        return str(obj.__class__)
 
 def extract(data):
     """Extract data from h5py data objects.

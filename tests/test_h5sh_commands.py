@@ -58,7 +58,7 @@ def test_ls(tmpstate, capsys):
     cmd(tmpstate, '-l')
     assert """\
 scalar   Dataset (d: scalar)
-subgroup Group (1 items)
+subgroup Group (1 item)
 vector   Dataset (i: 3)
 """ == capsys.readouterr().out
 

@@ -191,7 +191,7 @@ class Interrupt(object):
         if cur_time - self.last_time < Interrupt.warning_time:
             # Print helpful message on two consecutive interrupts within 2
             # seconds
-            print("\n(Enter 'exit' or type Ctrl-D to quit)")
+            print("\n(Use the 'exit' command or type Ctrl-D to quit)")
         else:
             print()
         self.last_time = cur_time

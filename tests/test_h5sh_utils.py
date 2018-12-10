@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import (division, absolute_import, print_function, )
 
+from pprint import pprint
 import pytest
 import h5py
 
@@ -40,6 +41,36 @@ def test_subgroup(example_h5_filename):
             subgroup(example_h5_file, 'extlink')
         with pytest.raises(KeyError):
             subgroup(example_h5_file, 'nonexist')
+
+def test_items(example_h5_filename):
+    with h5py.File(example_h5_filename, 'r') as f:
+        items = dict(module.items(f))
+        assert sorted(items) == ['extgroup', 'extlink', 'group', 'link',
+                'softlink', 'subsubgroup_hardlink']
+        assert isinstance(items['group'], h5py.Group)
+        assert isinstance(items['softlink'], h5py.SoftLink)
+        assert isinstance(items['extgroup'], h5py.ExternalLink)
+        assert isinstance(items['extlink'], h5py.ExternalLink)
+        items = dict(module.items(f['group']))
+        assert isinstance(items['scalar'], h5py.Dataset)
+
+def test_short_describe(example_h5_filename):
+    descr = module.short_describe
+    with h5py.File(example_h5_filename, 'r') as f:
+        items = dict((k,descr(v)) for (k,v) in module.items(f))
+        # pprint(items)
+        assert items == {
+                'extgroup': 'Link (.../example-data-external.h5:external_group)',
+                'extlink': 'Link (.../example-data-external.h5:external_ds)',
+                'group': 'Group (3 items)',
+                'link': 'Dataset (i: 3)',
+                'softlink': 'Link (/group/scalar)',
+                'subsubgroup_hardlink': 'Group (0 items)'}
+        items = dict((k,descr(v)) for (k,v) in module.items(f['group']))
+        assert items == {
+                'scalar': 'Dataset (d: scalar)',
+                'subgroup': 'Group (1 item)',
+                'vector': 'Dataset (i: 3)'}
 
 def test_unescape_string():
     un = module.unescape_string
