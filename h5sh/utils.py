@@ -3,11 +3,10 @@
 from __future__ import (division, absolute_import, print_function, )
 from six import PY3
 #-----------------------------------------------------------------------------#
-from exnihilotools.package import delayed_error_module
-
-np = delayed_error_module('numpy')
-h5py = delayed_error_module('h5py')
-readline = delayed_error_module('readline')
+import h5py
+import numpy as np
+import os
+import readline
 
 # Whether the libedit compatibility version of the readline module is running
 # (it has a different textual interface and capabilities)
@@ -179,63 +178,6 @@ def short_describe(item):
         # Unknown
         return str(item.__class__)
 
-
-_supports_alignment = None
-
-
-def supports_alignment():
-    """Check whether this version of h5py supports aligned datatypes.
-
-    A bug in h5py 2.6 and below returns garbage for numeric aligned datatypes
-    and can crash if there's a vlen member in them.
-
-    (Aligned compound datatypes correspond to structs with padding.)
-    """
-    global _supports_alignment
-    if _supports_alignment is not None:
-        return _supports_alignment
-
-    dt = np.dtype('i2,i8', align=True)
-    ht = h5py.h5t.py_create(dt)
-
-    _supports_alignment = (dt.itemsize == ht.get_size())
-    return _supports_alignment
-
-
-def extract_compound_byfield(item):
-    """Extract data from a compound dataset.
-
-    This is a workaround for a crash in h5py when "supports_alignment" is
-    False.
-    """
-    # Even though it doesn't support alignment correctly, h5py
-    # still lets us extract arrays of fields without errors
-    data = np.empty(item.shape, dtype=item.dtype)
-    for n in item.dtype.names:
-        data[n] = item[n]
-    return data
-
-#pylint: disable=function-redefined
-
-
-def _extract_array(arr):
-    # Global variable allows lazily replacing this function with another
-    global _extract_array
-    if supports_alignment():
-        def extract_array(data): return data[:]
-    else:
-        def extract_array(data):
-            """Safely extract compound fields for older h5py versions."""
-            if getattr(data.dtype, 'names', None) is not None:
-                data = extract_compound_byfield(data)
-            else:
-                data = data[:]
-            return data
-
-    _extract_array = extract_array
-    return extract_array(arr)
-
-
 def extract(data):
     """Extract data from h5py data objects.
 
@@ -250,7 +192,7 @@ def extract(data):
 
     if shape:
         # Extract array data (possibly compound)
-        data = _extract_array(data)
+        data = data[:]
         if PY3 and data.size and isinstance(next(data.flat), bytes):
             # In Python 3, variable-length ASCII strings are read as bytes,
             # which causes everything else in python 3 to be super unhappy.

@@ -7,7 +7,7 @@ from pprint import pformat
 import sys
 from time import time
 
-from exnihilotools.numpy import printoptions
+from numpy import printoptions
 from .utils import (short_describe, make_column_kv_fmt, to_native_str, extract,
                     readline, unescape_string, np, subgroup, format_shape)
 ###############################################################################
