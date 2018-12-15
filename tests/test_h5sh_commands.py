@@ -11,7 +11,7 @@ def tmpstate(example_h5_filename):
         yield f
 
 def test_interrupt(tmpstate, capsys):
-    cmd = module.INTERRUPT_CMD
+    cmd = module.system.INTERRUPT_CMD
     tmpstate = None
     cmd(tmpstate)
     assert "\n" == capsys.readouterr().out

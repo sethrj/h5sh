@@ -5,8 +5,8 @@ from six.moves import input
 #-----------------------------------------------------------------------------#
 import shlex
 
-from .commands import COMMANDS, INTERRUPT_CMD, NULL_CMD, CommandCompleter
 from .commands import COMMANDS
+from .commands.system import INTERRUPT_CMD, NULL_CMD
 ###############################################################################
 
 class Console(object):
