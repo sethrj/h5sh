@@ -7,7 +7,7 @@ import h5py
 import os
 import sys
 
-from .utils import abspath, readline, IS_READLINE_LIBEDIT
+from .utils import abspath
 ###############################################################################
 
 
@@ -36,13 +36,7 @@ class State(object):
         #: Prompt
         prompt = "> "
         if sys.stdout.isatty():
-            if not IS_READLINE_LIBEDIT:
-                prompt = _get_default_color_prompt()
-            else:
-                # Libedit (and/or the python interface to it) conspire to write
-                # ASCII terminal sequences as literal characters, so colors
-                # don't work properly.
-                prompt = "{s.basename}: {s.cwd}> "
+            prompt = _get_default_color_prompt()
         self.prompt = prompt.format
 
     def close(self):

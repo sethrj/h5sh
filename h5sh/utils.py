@@ -6,11 +6,6 @@ from six import PY3
 import h5py
 import numpy as np
 import os
-import readline
-
-# Whether the libedit compatibility version of the readline module is running
-# (it has a different textual interface and capabilities)
-IS_READLINE_LIBEDIT = readline and "libedit" in readline.__doc__
 
 ###############################################################################
 # STRING UTILITIES
