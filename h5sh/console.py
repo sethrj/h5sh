@@ -3,27 +3,37 @@
 from __future__ import (division, absolute_import, print_function, )
 from six.moves import input
 #-----------------------------------------------------------------------------#
+from prompt_toolkit import PromptSession
+from prompt_toolkit.patch_stdout import patch_stdout
+from prompt_toolkit.lexers import PygmentsLexer
+from pygments.lexers import BashLexer
 import shlex
 
 from .commands import COMMANDS
 from .commands.system import INTERRUPT_CMD, NULL_CMD
+
 ###############################################################################
 
 class Console(object):
     def __init__(self, state):
+        # Command-line state
         self.state = state
+        # Prompt session
+        self.session = PromptSession(
+                lexer=PygmentsLexer(BashLexer))
         # Debug mode
         self.debug = False
 
-        # Set up readline
-        global setup_readline
-        setup_readline(self.state)
+    def prompt(self):
+        with patch_stdout(raw=True):
+            text = self.session.prompt(self.state.get_prompt())
+        return text
 
     def read(self):
         """Prompt for and read a single command.
         """
         try:
-            text = input(self.state.get_prompt())
+            text = self.prompt()
         except KeyboardInterrupt:
             cmd = INTERRUPT_CMD.name
             args = ()

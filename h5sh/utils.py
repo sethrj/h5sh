@@ -11,7 +11,6 @@ import os
 # STRING UTILITIES
 ###############################################################################
 
-
 def abspath(newpath, curpath):
     """Return the absolute path to the given 'newpath'.
 

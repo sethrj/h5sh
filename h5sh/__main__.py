@@ -14,11 +14,9 @@ def run(inp, debug=False):
 
 def main(argv=None):
     from argparse import ArgumentParser
-    from exnihilotools import ENVIRONMENT
 
     # Load version
-
-    scale_vers = ENVIRONMENT['scale_version']
+    this_version = "DEV"
 
     h5err = None
     try:
@@ -32,7 +30,7 @@ def main(argv=None):
 
     py_vers = "{v.major}.{v.minor}.{v.micro}".format(v=sys.version_info)
     version_str = "h5py {} [Python {}] [h5py {}] [HDF5 {}]".format(
-        scale_vers, py_vers, h5py_vers, hdf5_vers)
+        this_version, py_vers, h5py_vers, hdf5_vers)
 
     # Create parser
 
