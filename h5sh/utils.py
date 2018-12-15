@@ -62,6 +62,8 @@ def subgroup(group, path):
 
     try:
         group = group[path]
+    except KeyError as e:
+        raise ValueError("{}: No such group".format(path))
     except Exception as e:
         print("Failed to open group '{}' in '{}'".format(path, group.name))
         raise

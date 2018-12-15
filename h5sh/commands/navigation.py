@@ -44,13 +44,14 @@ class Listdir(Command):
             description="List items in the current group")
         parser.add_argument('-l', dest='long', action='store_true')
         parser.add_argument('-1', dest='oneline', action='store_true')
-        parser.add_argument('subdir', nargs='?')
+        parser.add_argument('group', nargs='?')
         return parser
 
-    def execute(self, state, long, oneline, subdir=None):
-        group = state.group
-        if subdir is not None:
-            group = subgroup(group, subdir)
+    def execute(self, state, long, oneline, group=None):
+        if group is not None:
+            group = subgroup(state.group, group)
+        else:
+            group = state.group
 
         keys = sorted(group)
         if not keys:

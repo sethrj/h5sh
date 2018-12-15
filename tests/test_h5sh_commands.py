@@ -120,10 +120,3 @@ def test_help(tmpstate, capsys):
     s = capsys.readouterr().out
     assert s.startswith("Available commands:")
 
-def test_prompt(tmpstate, capsys):
-    cmd = module.COMMANDS['prompt']
-    cmd(tmpstate, "{s.basename}:{s.cwd}")
-    cmd(tmpstate)
-    assert "'{s.basename}:{s.cwd}'\n" == capsys.readouterr().out
-    assert "example-data.h5:/" == tmpstate.get_prompt()
-

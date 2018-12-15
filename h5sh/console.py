@@ -5,6 +5,7 @@ from __future__ import (division, absolute_import, print_function,
 from six.moves import input
 #-----------------------------------------------------------------------------#
 from prompt_toolkit import PromptSession
+from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.styles import Style
@@ -24,13 +25,53 @@ def _get_console_lexer():
         return None
     return PygmentsLexer(BashLexer)
 
+class CommandCompleter(Completer):
+    def __init__(self, state):
+        self.state = state
+        self.cmd_names = sorted(k for k in COMMANDS if not k.startswith('_'))
+
+    def get_completions(self, document, complete_event):
+        preceding_word = document.get_word_before_cursor()
+
+        if len(document.text) == len(preceding_word):
+            # Empty or completing the first command: list commands that start
+            # with the prefix
+            completions = self._initial_completions(preceding_word)
+        else:
+            # Process the text that's there
+            try:
+                args = shlex.split(document.text)
+            except ValueError:
+                return
+            try:
+                cmd = COMMANDS[args[0]]
+            except KeyError:
+                return
+
+            try:
+                get_completions = cmd.get_completions
+            except AttributeError:
+                return
+
+            completions = cmd.get_completions(document)
+
+        # XXX in Python 3.3+ this could be "yield from completions"
+        for c in completions:
+            yield c
+
+    def _initial_completions(self, preceding_word):
+        for cmd in self.cmd_names:
+            if cmd.startswith(preceding_word):
+                yield Completion(cmd, start_position=-len(preceding_word))
+
 class Console(object):
     def __init__(self, state):
         # Command-line state
         self.state = state
         # Prompt session
         self.session = PromptSession(lexer=_get_console_lexer(),
-                style=Style(get_style_rules()))
+                style=Style(get_style_rules()),
+                completer=CommandCompleter(state))
         # Debug mode
         self.debug = False
 

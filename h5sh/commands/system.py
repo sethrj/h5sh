@@ -70,27 +70,3 @@ def _help(state):
 def filename(state):
     print(state.f.filename)
 
-###############################################################################
-
-@register("Get or change the terminal prompt")
-def prompt(state, text=None):
-    if text is None:
-        # Print the prompt if no argument is specified
-        print(repr(state.prompt.__self__))
-        return
-
-    try:
-        text = unescape_string(text)
-    except Exception as e:
-        raise ValueError("Couldn't process prompt string: " + str(e))
-
-    new_prompt = text.format
-
-    # Shlex escapes the escape characters if user embeds in quotes.
-    try:
-        new_prompt(s=state)
-    except Exception as e:
-        raise ValueError("Couldn't set prompt: " + str(e))
-
-    state.prompt = new_prompt
-
