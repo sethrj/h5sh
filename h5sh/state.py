@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import (division, absolute_import, print_function, )
+from __future__ import (division, absolute_import, print_function,
+        unicode_literals)
 #-----------------------------------------------------------------------------#
 from contextlib import contextmanager
 import h5py
@@ -8,16 +9,9 @@ import os
 import sys
 
 from .utils import abspath
+from .styles import (styled_filename, HDF5_GROUP, PROMPT_TOKEN)
+
 ###############################################################################
-
-
-def _get_default_color_prompt():
-    from exnihilotools.terminal import (ansi_color as ansi, COLORS,
-                                        RESET_STYLE)
-    return "".join([ansi(COLORS['fb']), "{s.basename}",
-                    ansi(RESET_STYLE), ":", ansi(COLORS['fg']), "{s.cwd}",
-                    ansi(RESET_STYLE), "> "])
-
 
 class State(object):
     """The state of the current "shell".
@@ -33,11 +27,6 @@ class State(object):
         self.f = h5py.File(filename, mode)
         # Current group
         self.group = self.f
-        #: Prompt
-        prompt = "> "
-        if sys.stdout.isatty():
-            prompt = _get_default_color_prompt()
-        self.prompt = prompt.format
 
     def close(self):
         self.f.close()
@@ -71,10 +60,16 @@ class State(object):
         """Path of the current HDF5 group"""
         return self.group.name
 
-    def get_prompt(self):
-        """Get the prompt given our current state.
+    def get_styled_prompt(self):
+        """Get a list [(clsfmt, text), ...] for the prompt.
         """
-        return self.prompt(s=self)
+        result = styled_filename(self.filename) + [
+                ('', ":"),
+                (HDF5_GROUP, self.cwd),
+                (PROMPT_TOKEN, ' > '),
+                ]
+
+        return result
 
     def __eq__(self, other):
         return self.group == other.group and self.prompt == other.prompt

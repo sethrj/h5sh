@@ -1,32 +1,43 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import (division, absolute_import, print_function, )
+from __future__ import (division, absolute_import, print_function,
+        unicode_literals)
 from six.moves import input
 #-----------------------------------------------------------------------------#
 from prompt_toolkit import PromptSession
+from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.patch_stdout import patch_stdout
-from prompt_toolkit.lexers import PygmentsLexer
-from pygments.lexers import BashLexer
+from prompt_toolkit.styles import Style
 import shlex
 
 from .commands import COMMANDS
 from .commands.system import INTERRUPT_CMD, NULL_CMD
+from .styles import get_style_rules
 
 ###############################################################################
+
+def _get_console_lexer():
+    try:
+        from prompt_toolkit.lexers import PygmentsLexer
+        from pygments.lexers import BashLexer
+    except ImportError:
+        return None
+    return PygmentsLexer(BashLexer)
 
 class Console(object):
     def __init__(self, state):
         # Command-line state
         self.state = state
         # Prompt session
-        self.session = PromptSession(
-                lexer=PygmentsLexer(BashLexer))
+        self.session = PromptSession(lexer=_get_console_lexer(),
+                style=Style(get_style_rules()))
         # Debug mode
         self.debug = False
 
     def prompt(self):
         with patch_stdout(raw=True):
-            text = self.session.prompt(self.state.get_prompt())
+            prompt = FormattedText(self.state.get_styled_prompt())
+            text = self.session.prompt(prompt)
         return text
 
     def read(self):
