@@ -17,10 +17,10 @@ class Chdir(Command):
     def build_parser(self):
         parser = super(Chdir, self).build_parser(
             description="Change the current HDF5 group")
-        parser.add_argument('group')
+        parser.add_argument('group', nargs='?')
         return parser
 
-    def execute(self, state, group):
+    def execute(self, state, group=None):
         try:
             state.chdir(group)
         except KeyError as e:

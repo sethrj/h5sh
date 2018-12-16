@@ -39,7 +39,7 @@ def test_subgroup(example_h5_filename):
                 == subgroup(g, '../subsubgroup_hardlink').name)
         with pytest.raises(ValueError):
             subgroup(example_h5_file, 'extlink')
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             subgroup(example_h5_file, 'nonexist')
 
 def test_items(example_h5_filename):

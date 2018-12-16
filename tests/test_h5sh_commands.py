@@ -87,6 +87,7 @@ def test_dump(tmpstate, capsys, tmpdir):
 /group/scalar: scalar
 Type         : float64
 Attributes   : {'cats': array(['Kali', 'Bustopher Jones'], dtype=object)}
+---
 1.23
 """ == capsys.readouterr().out.replace("u'","'")
 
@@ -101,6 +102,7 @@ Attributes   : {'cats': array(['Kali', 'Bustopher Jones'], dtype=object)}
     assert """\
 /group/vector: 3
 Type         : int32
+---
 [1 2 3]
 """ == capsys.readouterr().out
 

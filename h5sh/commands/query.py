@@ -81,6 +81,8 @@ class Dump(Command):
                   "to save to a file", file=f)
             return
 
+        print("---", file=f)
+
         item = extract(item)
         if shape:
             # Print array with given options
