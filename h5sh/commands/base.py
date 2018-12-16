@@ -30,6 +30,23 @@ class Command(object):
 
         self.execute(state, **vars(parsed))
 
+    def get_completions(self, document, args, state):
+        """Get completions for this command.
+
+        'args' is the list of given arguments to the command.
+        """
+        in_word = document.get_word_before_cursor(WORD=True)
+        if in_word.startswith('-'):
+            for arg in self.parser.options:
+                yield arg
+        else:
+            if self.parser.dataset:
+                for arg in state.datasets:
+                    yield arg
+            if self.parser.group:
+                for arg in state.subgroups:
+                    yield arg
+
     @property
     def description(self):
         desc = self.parser.description

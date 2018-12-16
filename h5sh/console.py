@@ -9,11 +9,11 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.styles import Style
-import shlex
 
 from .commands import COMMANDS
 from .commands.system import INTERRUPT_CMD, NULL_CMD
 from .styles import get_style_rules
+from .utils import shlex_split
 
 ###############################################################################
 
@@ -31,18 +31,15 @@ class CommandCompleter(Completer):
         self.cmd_names = sorted(k for k in COMMANDS if not k.startswith('_'))
 
     def get_completions(self, document, complete_event):
-        preceding_word = document.get_word_before_cursor()
+        preceding_word = document.get_word_before_cursor(WORD=True)
 
         if len(document.text) == len(preceding_word):
             # Empty or completing the first command: list commands that start
             # with the prefix
-            completions = self._initial_completions(preceding_word)
+            completions = self.cmd_names
         else:
             # Process the text that's there
-            try:
-                args = shlex.split(document.text)
-            except ValueError:
-                return
+            args = shlex_split(document.text)
             try:
                 cmd = COMMANDS[args[0]]
             except KeyError:
@@ -53,16 +50,12 @@ class CommandCompleter(Completer):
             except AttributeError:
                 return
 
-            completions = cmd.get_completions(document)
+            completions = cmd.get_completions(document, args[1:], self.state)
 
-        # XXX in Python 3.3+ this could be "yield from completions"
-        for c in completions:
-            yield c
-
-    def _initial_completions(self, preceding_word):
-        for cmd in self.cmd_names:
-            if cmd.startswith(preceding_word):
-                yield Completion(cmd, start_position=-len(preceding_word))
+        pos = -len(preceding_word)
+        for arg in completions:
+            if arg.startswith(preceding_word):
+                yield Completion(arg, pos)
 
 class Console(object):
     def __init__(self, state):
@@ -93,7 +86,7 @@ class Console(object):
             cmd = "exit"
             args = ()
         else:
-            args = shlex.split(text)
+            args = shlex_split(text)
             if args:
                 cmd = args[0]
                 args = args[1:]

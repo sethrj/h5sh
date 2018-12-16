@@ -11,13 +11,22 @@ from .base import Command
 from .registry import register
 ###############################################################################
 
+class Chdir(Command):
+    name = "cd"
 
-@register("Change the current HDF5 group")
-def cd(state, subdir=None):
-    try:
-        state.chdir(subdir)
-    except KeyError as e:
-        raise ValueError(str(e))
+    def build_parser(self):
+        parser = super(Chdir, self).build_parser(
+            description="Change the current HDF5 group")
+        parser.add_argument('group')
+        return parser
+
+    def execute(self, state, group):
+        try:
+            state.chdir(group)
+        except KeyError as e:
+            raise ValueError(str(e))
+
+cd = register.instance(Chdir)
 
 @register("Print the path to the current HDF5 group")
 def pwd(state):

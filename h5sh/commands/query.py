@@ -16,7 +16,6 @@ from .registry import register
 
 class Dump(Command):
     name = "dump"
-
     STDOUT = "STDOUT"
 
     def build_parser(self):
@@ -27,8 +26,7 @@ class Dump(Command):
                             action="store_true")
         parser.add_argument('-p', '--precision', type=int, default=4,
                             help="Floating point precision")
-        parser.add_argument(
-            '--suppress',
+        parser.add_argument( '--suppress',
             help="Print very small numbers as zero",
             action="store_true")
         parser.add_argument('dataset', help="Dataset to print")
@@ -102,15 +100,18 @@ class Attrs(Command):
 
     def build_parser(self):
         parser = super(Attrs, self).build_parser(
-            description="Print attributes of the current group")
+            description="Print attributes of the current group or a given "
+            "object")
+        parser.add_argument('object', nargs='?')
         return parser
 
-    def execute(self, state, daughter=None):
-        group = state.group
-        if daughter is not None:
-            group = group[daughter]
+    def execute(self, state, obj=None):
+        if obj is not None:
+            obj = state.group[obj]
+        else:
+            obj = state.group
 
-        attrs = group.attrs
+        attrs = obj.attrs
         keys = sorted(attrs)
         if not keys:
             return

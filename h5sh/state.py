@@ -21,12 +21,40 @@ class State(object):
     """
 
     def __init__(self, filename, mode='r'):
-        # Path to the file
-        self.basename = os.path.basename(filename)
         # HDF5 file
         self.f = h5py.File(filename, mode)
         # Current group
         self.group = self.f
+        # Groups/datasets inside the current group
+        self._cur_items = None
+
+    @property
+    def subgroups(self):
+        """Get a cached list of groups inside the current group.
+        """
+        if self._cur_items is None:
+            self._update_cur_items()
+        return self._cur_items[0]
+
+    @property
+    def datasets(self):
+        """Get a cached list of datasets inside the current group.
+        """
+        if self._cur_items is None:
+            self._update_cur_items()
+        return self._cur_items[1]
+
+    def _update_cur_items(self):
+        _cur_group = self.group
+        groups = []
+        datasets = []
+        for key in _cur_group:
+            cls = _cur_group.get(key, getclass=True)
+            if issubclass(cls, h5py.Group):
+                groups.append(key)
+            elif issubclass(cls, h5py.Dataset):
+                datasets.append(key)
+        self._cur_items = (groups, datasets)
 
     def close(self):
         self.f.close()
@@ -49,6 +77,8 @@ class State(object):
         if not isinstance(group, h5py.Group):
             raise ValueError("{} is not a group".format(group.name))
         self.group = group
+        # Clear cache of current items
+        self._cur_items = None
 
     @property
     def filename(self):
@@ -70,12 +100,6 @@ class State(object):
                 ]
 
         return result
-
-    def __eq__(self, other):
-        return self.group == other.group and self.prompt == other.prompt
-
-    def __ne__(self, other):
-        return not (self == other)
 
     def __enter__(self):
         return self

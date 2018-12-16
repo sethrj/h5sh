@@ -7,10 +7,14 @@ from six import PY3
 import h5py
 import numpy as np
 import os
+import shlex
 
 ###############################################################################
 # STRING UTILITIES
 ###############################################################################
+
+def shlex_split(text):
+    return shlex.split(text)
 
 def abspath(newpath, curpath):
     """Return the absolute path to the given 'newpath'.
@@ -92,7 +96,6 @@ else:
 ###############################################################################
 # ARRAY UTILITIES
 ###############################################################################
-
 
 def vectorized(dtype='O', nargin=1, nargout=1):
     """Decorator function for applying a python function to an array.
