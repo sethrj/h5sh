@@ -2,6 +2,7 @@
 
 from __future__ import (division, absolute_import, print_function,
         unicode_literals)
+from . import __version__
 import sys
 
 def run(inp, debug=False):
@@ -17,7 +18,7 @@ def main(argv=None):
     from argparse import ArgumentParser
 
     # Load version
-    this_version = "DEV"
+    this_version = __version__
 
     h5err = None
     try:
