@@ -1,25 +1,20 @@
-###############################################################################
-# File  : Nemesis/python/exnihilotools/h5sh/utils.py
-# Author: Seth R Johnson
-# Date  : Thu Jun 01 11:35:04 2017
-###############################################################################
-from __future__ import (division, absolute_import, print_function, )
+# -*- coding: utf-8 -*-
+
+from __future__ import (division, absolute_import, print_function,
+        unicode_literals)
 from six import PY3
 #-----------------------------------------------------------------------------#
-from exnihilotools.package import delayed_error_module
-
-np = delayed_error_module('numpy')
-h5py = delayed_error_module('h5py')
-readline = delayed_error_module('readline')
-
-# Whether the libedit compatibility version of the readline module is running
-# (it has a different textual interface and capabilities)
-IS_READLINE_LIBEDIT = readline and "libedit" in readline.__doc__
+import h5py
+import numpy as np
+import os
+import shlex
 
 ###############################################################################
 # STRING UTILITIES
 ###############################################################################
 
+def shlex_split(text):
+    return shlex.split(text)
 
 def abspath(newpath, curpath):
     """Return the absolute path to the given 'newpath'.
@@ -71,6 +66,8 @@ def subgroup(group, path):
 
     try:
         group = group[path]
+    except KeyError as e:
+        raise ValueError("{}: No such group".format(path))
     except Exception as e:
         print("Failed to open group '{}' in '{}'".format(path, group.name))
         raise
@@ -99,7 +96,6 @@ else:
 ###############################################################################
 # ARRAY UTILITIES
 ###############################################################################
-
 
 def vectorized(dtype='O', nargin=1, nargout=1):
     """Decorator function for applying a python function to an array.
@@ -165,79 +161,41 @@ def format_shape(shape):
         return "scalar"
     return _MULT_SYMBOL.join(str(i) for i in shape)
 
+def items(group):
+    """Generator for key/value pairs in a group, returning links where
+    possible.
 
-def short_describe(item):
+    The only returned link types are External or Soft. Hard links are opened
+    and the corresponding item is returned.
+    """
+    for key in group:
+        value = group.get(key, getlink=True)
+        if isinstance(value, h5py.HardLink):
+            # Get the actual corresponding dataset or group
+            value = group[key]
+        yield (key, value)
+
+def short_describe(obj):
     """Return a short description of the given group/dataset.
     """
-    if isinstance(item, h5py.Group):
-        return "Group ({:d} items)".format(len(item))
-    elif isinstance(item, h5py.Dataset):
+    if isinstance(obj, h5py.Group):
+        return "Group ({:d} item{:s})".format(len(obj),
+                "s" if len(obj) != 1 else "")
+    elif isinstance(obj, h5py.Dataset):
         return "Dataset ({:s}: {:s})".format(
-            item.dtype.char, format_shape(item.shape))
-    elif isinstance(item, h5py.SoftLink):
-        return "Link ({:s})".format(item.path)
-    elif isinstance(item, h5py.ExternalLink):
-        return "Link ({:s}:{:s})".format(item.filename, item.path)
+            obj.dtype.char, format_shape(obj.shape))
+    elif isinstance(obj, h5py.SoftLink):
+        return "Link ({:s})".format(obj.path)
+    elif isinstance(obj, h5py.ExternalLink):
+        filename = obj.filename
+        if os.path.isabs(filename):
+            filename = os.path.sep.join(['...', os.path.basename(filename)])
+        return "Link ({:s}:{:s})".format(filename, obj.path)
+    elif isinstance(obj, h5py.HardLink):
+        return "Object"
     else:
         # Unknown
-        return str(item.__class__)
-
-
-_supports_alignment = None
-
-
-def supports_alignment():
-    """Check whether this version of h5py supports aligned datatypes.
-
-    A bug in h5py 2.6 and below returns garbage for numeric aligned datatypes
-    and can crash if there's a vlen member in them.
-
-    (Aligned compound datatypes correspond to structs with padding.)
-    """
-    global _supports_alignment
-    if _supports_alignment is not None:
-        return _supports_alignment
-
-    dt = np.dtype('i2,i8', align=True)
-    ht = h5py.h5t.py_create(dt)
-
-    _supports_alignment = (dt.itemsize == ht.get_size())
-    return _supports_alignment
-
-
-def extract_compound_byfield(item):
-    """Extract data from a compound dataset.
-
-    This is a workaround for a crash in h5py when "supports_alignment" is
-    False.
-    """
-    # Even though it doesn't support alignment correctly, h5py
-    # still lets us extract arrays of fields without errors
-    data = np.empty(item.shape, dtype=item.dtype)
-    for n in item.dtype.names:
-        data[n] = item[n]
-    return data
-
-#pylint: disable=function-redefined
-
-
-def _extract_array(arr):
-    # Global variable allows lazily replacing this function with another
-    global _extract_array
-    if supports_alignment():
-        def extract_array(data): return data[:]
-    else:
-        def extract_array(data):
-            """Safely extract compound fields for older h5py versions."""
-            if getattr(data.dtype, 'names', None) is not None:
-                data = extract_compound_byfield(data)
-            else:
-                data = data[:]
-            return data
-
-    _extract_array = extract_array
-    return extract_array(arr)
-
+        return str(obj.__class__)
 
 def extract(data):
     """Extract data from h5py data objects.
@@ -253,7 +211,7 @@ def extract(data):
 
     if shape:
         # Extract array data (possibly compound)
-        data = _extract_array(data)
+        data = data[:]
         if PY3 and data.size and isinstance(next(data.flat), bytes):
             # In Python 3, variable-length ASCII strings are read as bytes,
             # which causes everything else in python 3 to be super unhappy.
@@ -281,6 +239,3 @@ if not h5py:
 
     def extract(data): return data
 
-###############################################################################
-# end of Nemesis/python/exnihilotools/h5sh/utils.py
-###############################################################################

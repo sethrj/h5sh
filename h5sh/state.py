@@ -1,26 +1,17 @@
-###############################################################################
-# File  : Nemesis/python/exnihilotools/h5sh/state.py
-# Author: Seth R Johnson
-# Date  : Wed May 31 14:23:00 2017
-###############################################################################
-from __future__ import (division, absolute_import, print_function, )
+# -*- coding: utf-8 -*-
+
+from __future__ import (division, absolute_import, print_function,
+        unicode_literals)
 #-----------------------------------------------------------------------------#
 from contextlib import contextmanager
 import h5py
 import os
 import sys
 
-from .utils import abspath, readline, IS_READLINE_LIBEDIT
+from .utils import abspath
+from .styles import (styled_filename, HDF5_GROUP, PROMPT_TOKEN)
+
 ###############################################################################
-
-
-def _get_default_color_prompt():
-    from exnihilotools.terminal import (ansi_color as ansi, COLORS,
-                                        RESET_STYLE)
-    return "".join([ansi(COLORS['fb']), "{s.basename}",
-                    ansi(RESET_STYLE), ":", ansi(COLORS['fg']), "{s.cwd}",
-                    ansi(RESET_STYLE), "> "])
-
 
 class State(object):
     """The state of the current "shell".
@@ -30,23 +21,40 @@ class State(object):
     """
 
     def __init__(self, filename, mode='r'):
-        # Path to the file
-        self.basename = os.path.basename(filename)
         # HDF5 file
         self.f = h5py.File(filename, mode)
         # Current group
         self.group = self.f
-        #: Prompt
-        prompt = "> "
-        if sys.stdout.isatty():
-            if not IS_READLINE_LIBEDIT:
-                prompt = _get_default_color_prompt()
-            else:
-                # Libedit (and/or the python interface to it) conspire to write
-                # ASCII terminal sequences as literal characters, so colors
-                # don't work properly.
-                prompt = "{s.basename}: {s.cwd}> "
-        self.prompt = prompt.format
+        # Groups/datasets inside the current group
+        self._cur_items = None
+
+    @property
+    def subgroups(self):
+        """Get a cached list of groups inside the current group.
+        """
+        if self._cur_items is None:
+            self._update_cur_items()
+        return self._cur_items[0]
+
+    @property
+    def datasets(self):
+        """Get a cached list of datasets inside the current group.
+        """
+        if self._cur_items is None:
+            self._update_cur_items()
+        return self._cur_items[1]
+
+    def _update_cur_items(self):
+        _cur_group = self.group
+        groups = []
+        datasets = []
+        for key in _cur_group:
+            cls = _cur_group.get(key, getclass=True)
+            if issubclass(cls, h5py.Group):
+                groups.append(key)
+            elif issubclass(cls, h5py.Dataset):
+                datasets.append(key)
+        self._cur_items = (groups, datasets)
 
     def close(self):
         self.f.close()
@@ -69,6 +77,8 @@ class State(object):
         if not isinstance(group, h5py.Group):
             raise ValueError("{} is not a group".format(group.name))
         self.group = group
+        # Clear cache of current items
+        self._cur_items = None
 
     @property
     def filename(self):
@@ -80,16 +90,21 @@ class State(object):
         """Path of the current HDF5 group"""
         return self.group.name
 
-    def get_prompt(self):
-        """Get the prompt given our current state.
+    def get_styled_prompt(self, output):
+        """Get a list [(clsfmt, text), ...] for the prompt.
         """
-        return self.prompt(s=self)
+        cols = output.get_size().columns
+        cwd = self.cwd
+        # Try to fit the prompt on no more than half the terminal width
+        max_filename_len = cols // 2 - (len(cwd) + 4)
 
-    def __eq__(self, other):
-        return self.group == other.group and self.prompt == other.prompt
+        result = styled_filename(self.filename, max_filename_len) + [
+                ('', ":"),
+                (HDF5_GROUP, self.cwd),
+                (PROMPT_TOKEN, ' > '),
+                ]
 
-    def __ne__(self, other):
-        return not (self == other)
+        return result
 
     def __enter__(self):
         return self

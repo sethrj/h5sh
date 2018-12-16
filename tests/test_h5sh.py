@@ -6,7 +6,7 @@
 import pytest
 
 
-from h5sh import h5sh
+from h5sh import commands
 
 
 @pytest.fixture

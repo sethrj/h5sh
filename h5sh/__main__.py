@@ -1,13 +1,9 @@
-###############################################################################
-# File  : Nemesis/python/exnihilotools/h5sh/main.py
-# Author: Seth R Johnson
-# Date  : Wed May 31 14:22:57 2017
-###############################################################################
-from __future__ import (division, absolute_import, print_function, )
-#-----------------------------------------------------------------------------#
-import sys
-###############################################################################
+# -*- coding: utf-8 -*-
 
+from __future__ import (division, absolute_import, print_function,
+        unicode_literals)
+from . import __version__
+import sys
 
 def run(inp, debug=False):
     from .state import State
@@ -20,11 +16,9 @@ def run(inp, debug=False):
 
 def main(argv=None):
     from argparse import ArgumentParser
-    from exnihilotools import ENVIRONMENT
 
     # Load version
-
-    scale_vers = ENVIRONMENT['scale_version']
+    this_version = __version__
 
     h5err = None
     try:
@@ -38,12 +32,13 @@ def main(argv=None):
 
     py_vers = "{v.major}.{v.minor}.{v.micro}".format(v=sys.version_info)
     version_str = "h5py {} [Python {}] [h5py {}] [HDF5 {}]".format(
-        scale_vers, py_vers, h5py_vers, hdf5_vers)
+        this_version, py_vers, h5py_vers, hdf5_vers)
 
     # Create parser
 
-    parser = ArgumentParser(prog="h5sh",
-                            description="shell-like interface to interacting with HDF5 files")
+    parser = ArgumentParser(
+        prog="h5sh",
+        description="shell-like interface to interacting with HDF5 files")
     parser.add_argument('inp',
                         help="Name of the HDF5 input file")
     parser.add_argument('--version', action="version",
@@ -64,11 +59,6 @@ def main(argv=None):
     # Run the program
     run(**vars(args))
 
-
-#-----------------------------------------------------------------------------#
 if __name__ == '__main__':
     main()
 
-###############################################################################
-# end of Nemesis/python/exnihilotools/h5sh/main.py
-###############################################################################

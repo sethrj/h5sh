@@ -15,3 +15,7 @@ Sphinx = "==1.7.1"
 twine = "==1.10.0"
 
 [packages]
+"h5py" = "*"
+prompt-toolkit = ">=2.0"
+numpy = ">=1.15"
+pygments = "*"
