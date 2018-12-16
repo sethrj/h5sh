@@ -90,10 +90,15 @@ class State(object):
         """Path of the current HDF5 group"""
         return self.group.name
 
-    def get_styled_prompt(self):
+    def get_styled_prompt(self, output):
         """Get a list [(clsfmt, text), ...] for the prompt.
         """
-        result = styled_filename(self.filename) + [
+        cols = output.get_size().columns
+        cwd = self.cwd
+        # Try to fit the prompt on no more than half the terminal width
+        max_filename_len = cols // 2 - (len(cwd) + 4)
+
+        result = styled_filename(self.filename, max_filename_len) + [
                 ('', ":"),
                 (HDF5_GROUP, self.cwd),
                 (PROMPT_TOKEN, ' > '),

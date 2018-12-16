@@ -46,7 +46,8 @@ def styled_filename(filename, width=32):
         return result
 
     # Length for half of basename, subtracting len('.../') + len('...')
-    half_width = (width - 7) // 2
+    # with minimum in case width < 16
+    half_width = max(4, (width - 7) // 2)
     result = dirname + [
               (FILENAME, basename[:half_width]),
               (TRUNC_FILENAME, "..."),

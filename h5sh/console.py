@@ -61,16 +61,18 @@ class Console(object):
     def __init__(self, state):
         # Command-line state
         self.state = state
+        # Debug mode
+        self.debug = False
         # Prompt session
         self.session = PromptSession(lexer=_get_console_lexer(),
                 style=Style(get_style_rules()),
                 completer=CommandCompleter(state))
-        # Debug mode
-        self.debug = False
+        # prompt_toolkit Output class
+        self.output = self.session.app.output
 
     def prompt(self):
         with patch_stdout(raw=True):
-            prompt = FormattedText(self.state.get_styled_prompt())
+            prompt = FormattedText(self.state.get_styled_prompt(self.output))
             text = self.session.prompt(prompt)
         return text
 
