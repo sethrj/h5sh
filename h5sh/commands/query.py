@@ -22,17 +22,19 @@ class Dump(Command):
         parser = super(Dump, self).build_parser(
             description="Print the contents of a dataset")
         parser.add_argument('-A', '--onlyattr',
-                            help="Print only attributes",
-                            action="store_true")
+            help="Print only attributes",
+            action="store_true")
         parser.add_argument('-p', '--precision', type=int, default=4,
-                            help="Floating point precision")
-        parser.add_argument( '--suppress',
+            help="Floating point precision")
+        parser.add_argument('-t', '--threshold', type=int, default=50,
+            help="Number of values to display")
+        parser.add_argument( '--suppress_small',
             help="Print very small numbers as zero",
             action="store_true")
         parser.add_argument('dataset', help="Dataset to print")
         parser.add_argument('-o', '--out',
-                            help="File to save output",
-                            default=Dump.STDOUT)
+            help="File to save output",
+            default=Dump.STDOUT)
         return parser
 
     def execute(self, state, dataset, out, **kwargs):
@@ -54,41 +56,55 @@ class Dump(Command):
             raise ValueError("{} is not a dataset".format(item.name))
 
         # Print size and shape
-        padlen = max(len(s) for s in (item.name, "Attributes"))
-        format_key = ("{{:{:d}s}}:".format(padlen)).format
-        print(format_key(item.name), format_shape(shape), file=f)
+        f.write("Dataset: {}\n".format(item.name))
+        f.write("Shape: {}".format(format_shape(shape)))
+        if shape != item.maxshape:
+            f.write("of max {}".format(format_shape(item.maxshape)))
+        f.write("\n")
 
         # Print datatype
         dt = item.dtype
-        print(format_key("Type"), pformat(dt.descr) if dt.names else dt.name,
-              file=f)
+        if dt.names:
+            # Write compound type in detail
+            f.write("Type:\n")
+            f.write(pformat(dt.descr))
+        else:
+            f.write("Type: {}\n".format(dt.name))
 
         # Print attributes
         attrs = dict(item.attrs)
         if attrs:
-            print(format_key("Attributes"), pformat(attrs), file=f)
+            # Convert byte-strings to strings
+            attrs = dict((k, extract(v)) for (k, v) in attrs.items())
+            f.write("Attributes:\n")
+            f.write(pformat(attrs))
+            f.write("\n")
 
         # Print chunking
         if item.chunks:
-            print(format_key("Chunked"), item.chunks, file=f)
+            f.write("Chunked: {}\n".format(format_shape(item.chunks)))
+
+        if item.compression:
+            f.write("Compressed: {}\n".format(item.compression))
 
         if onlyattr:
             return
 
-        if f.isatty() and item.size > 60 * 5:
+        threshold = kwargs['threshold']
+        if item.size > threshold:
             # More than 60 lines, roughly
-            print("Dataset is too large to display; use '-o' flag "
-                  "to save to a file", file=f)
-            return
+            print("Truncating dataset ({:d} exceeds threshold {:d}): "
+                  "use -t to increase".format(item.size, threshold), file=f)
+            # Set edge items so that approximately "threshold" will appear:
+            # e.g. if dimension is 3, then take cube root of half the threshold
+            kwargs['edgeitems'] = max(1, int(pow(threshold/2, 1/len(shape))))
 
         print("---", file=f)
 
         item = extract(item)
         if shape:
             # Print array with given options
-            # (Use instead of array2string because of embedded objects)
-            with np.printoptions(**kwargs):
-                print(item, file=f)
+            print(np.array2string(item, **kwargs), file=f)
         else:
             print(item, file=f)
 

@@ -13,8 +13,30 @@ import shlex
 # STRING UTILITIES
 ###############################################################################
 
-def shlex_split(text):
-    return shlex.split(text)
+def shlex_split(s, comments=False, posix=True):
+    """
+    Splits a string using shell lexer, but returns any incomplete string as the
+    last component instead of erroring for unmatched quotations.
+    """
+    lex = shlex.shlex(s, posix=posix)
+    lex.whitespace_split = True
+    if not comments:
+        lex.commenters = ''
+
+    result = []
+    while True:
+        try:
+            tok = lex.get_token()
+        except ValueError as e:
+            print(repr(e))
+            # Append the current token
+            result.append(lex.token)
+            break
+        else:
+            if tok == lex.eof:
+                break
+        result.append(tok)
+    return result
 
 def abspath(newpath, curpath):
     """Return the absolute path to the given 'newpath'.
@@ -152,6 +174,7 @@ else:
 ###############################################################################
 
 _MULT_SYMBOL = u"\u00D7" if PY3 else "x"
+_INF_SYMBOL = u"\u221E" if PY3 else "inf"
 
 
 def format_shape(shape):
@@ -159,7 +182,8 @@ def format_shape(shape):
     """
     if not shape:
         return "scalar"
-    return _MULT_SYMBOL.join(str(i) for i in shape)
+    return _MULT_SYMBOL.join(str(i) if i is not None else _INF_SYMBOL
+                             for i in shape)
 
 def items(group):
     """Generator for key/value pairs in a group, returning links where
@@ -232,10 +256,4 @@ def extract(data):
             data = to_native_str(data)
 
     return data
-
-
-if not h5py:
-    del extract
-
-    def extract(data): return data
 

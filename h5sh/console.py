@@ -110,11 +110,11 @@ class Console(object):
             except KeyboardInterrupt:
                 INTERRUPT_CMD(self.state)
             except Exception as e:
-                if self.debug:
-                    import logging as log
-                    log.exception(e)
-                    raise
-                if isinstance(e, (TypeError, ValueError)):
+                if not self.debug and isinstance(e, (TypeError, ValueError)):
                     print("{}: {!s}".format(cmd_name, e))
                     continue
+
+                import logging as log
+                log.exception(e)
+                continue
 
