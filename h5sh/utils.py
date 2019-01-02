@@ -13,8 +13,30 @@ import shlex
 # STRING UTILITIES
 ###############################################################################
 
-def shlex_split(text):
-    return shlex.split(text)
+def shlex_split(s, comments=False, posix=True):
+    """
+    Splits a string using shell lexer, but returns any incomplete string as the
+    last component instead of erroring for unmatched quotations.
+    """
+    lex = shlex.shlex(s, posix=posix)
+    lex.whitespace_split = True
+    if not comments:
+        lex.commenters = ''
+
+    result = []
+    while True:
+        try:
+            tok = lex.get_token()
+        except ValueError as e:
+            print(repr(e))
+            # Append the current token
+            result.append(lex.token)
+            break
+        else:
+            if tok == lex.eof:
+                break
+        result.append(tok)
+    return result
 
 def abspath(newpath, curpath):
     """Return the absolute path to the given 'newpath'.

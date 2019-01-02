@@ -5,8 +5,27 @@ from __future__ import (division, absolute_import, print_function, )
 from pprint import pprint
 import pytest
 import h5py
+import sys
 
 import h5sh.utils as module
+
+@pytest.mark.skipif(sys.version_info < (3,3),
+        reason="Test is for Python 3 only (unicode support")
+def test_format_shape():
+    format_shape = module.format_shape
+    assert "scalar" == format_shape(())
+    assert "2" == format_shape((2,))
+    assert "2×10" == format_shape((2,10))
+    assert "2×∞" == format_shape((2,None))
+
+def test_shlex_split():
+    split = module.shlex_split
+    assert [] == split('')
+    assert ['foo'] == split('foo')
+    assert ['foo', 'bar'] == split('foo bar')
+    assert ['foo bar'] == split(r'foo\ bar')
+    assert ['foo bar', 'baz'] == split(r'"foo bar" baz')
+    assert ['foo bar', 'baz'] == split(r'"foo bar" "baz')
 
 def test_abspath():
     abspath = module.abspath
