@@ -9,6 +9,8 @@ from h5sh.utils import (make_column_kv_fmt, short_describe, subgroup)
 
 from .base import Command
 from .registry import register
+
+import h5py
 ###############################################################################
 
 class Chdir(Command):
@@ -69,7 +71,10 @@ class Listdir(Command):
         if long:
             fmt = make_column_kv_fmt(keys)
             for k in keys:
-                v = short_describe(group[k])
+                v = group.get(k, getlink=True)
+                if isinstance(v, h5py.HardLink):
+                    v = group[k]
+                v = short_describe(v)
                 print(fmt(k, v))
         elif oneline:
             for k in keys:

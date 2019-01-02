@@ -174,6 +174,7 @@ else:
 ###############################################################################
 
 _MULT_SYMBOL = u"\u00D7" if PY3 else "x"
+_INF_SYMBOL = u"\u221E" if PY3 else "inf"
 
 
 def format_shape(shape):
@@ -181,7 +182,8 @@ def format_shape(shape):
     """
     if not shape:
         return "scalar"
-    return _MULT_SYMBOL.join(str(i) for i in shape)
+    return _MULT_SYMBOL.join(str(i) if i is not None else _INF_SYMBOL
+                             for i in shape)
 
 def items(group):
     """Generator for key/value pairs in a group, returning links where
