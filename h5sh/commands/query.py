@@ -74,8 +74,11 @@ class Dump(Command):
         # Print attributes
         attrs = dict(item.attrs)
         if attrs:
+            # Convert byte-strings to strings
+            attrs = dict((k, extract(v)) for (k, v) in attrs.items())
             f.write("Attributes:\n")
             f.write(pformat(attrs))
+            f.write("\n")
 
         # Print chunking
         if item.chunks:

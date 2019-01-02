@@ -257,9 +257,3 @@ def extract(data):
 
     return data
 
-
-if not h5py:
-    del extract
-
-    def extract(data): return data
-
