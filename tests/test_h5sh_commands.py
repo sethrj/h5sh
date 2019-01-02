@@ -68,11 +68,11 @@ vector   Dataset (i: 3)
     tmpstate.chdir('/')
     cmd(tmpstate, '-l')
     assert """\
-extgroup             Group (0 items)
-extlink              Dataset (d: 4)
+extgroup             Link (.../example-data-external.h5:external_group)
+extlink              Link (.../example-data-external.h5:external_ds)
 group                Group (3 items)
 link                 Dataset (i: 3)
-softlink             Dataset (d: scalar)
+softlink             Link (/group/scalar)
 subsubgroup_hardlink Group (0 items)
 """ == capsys.readouterr().out
 
@@ -84,24 +84,29 @@ def test_dump(tmpstate, capsys, tmpdir):
 
     cmd(tmpstate, '/group/scalar')
     assert """\
-/group/scalar: scalar
-Type         : float64
-Attributes   : {'cats': array(['Kali', 'Bustopher Jones'], dtype=object)}
+Dataset: /group/scalar
+Shape: scalar
+Type: float64
+Attributes:
+{'cats': array(['Kali', 'Bustopher Jones'], dtype=object)}
 ---
 1.23
-""" == capsys.readouterr().out.replace("u'","'")
+""" == capsys.readouterr().out
 
     cmd(tmpstate, '/group/scalar', "-A")
     assert """\
-/group/scalar: scalar
-Type         : float64
-Attributes   : {'cats': array(['Kali', 'Bustopher Jones'], dtype=object)}
-""" == capsys.readouterr().out.replace("u'","'")
+Dataset: /group/scalar
+Shape: scalar
+Type: float64
+Attributes:
+{'cats': array(['Kali', 'Bustopher Jones'], dtype=object)}
+""" == capsys.readouterr().out
 
     cmd(tmpstate, '/group/vector')
     assert """\
-/group/vector: 3
-Type         : int32
+Dataset: /group/vector
+Shape: 3
+Type: int32
 ---
 [1 2 3]
 """ == capsys.readouterr().out
