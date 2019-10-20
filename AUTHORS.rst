@@ -1,13 +1,13 @@
-=======
-Credits
-=======
+*******
+Authors
+*******
 
 Development Lead
-----------------
+================
 
-* Seth Robert Johnson <johnsonsr@ornl.gov>
+* Seth R Johnson <johnsonsr@ornl.gov>
 
 Contributors
-------------
+============
 
 None yet. Why not be the first?
