@@ -20,7 +20,7 @@ class Dump(Command):
 
     def build_parser(self):
         parser = super(Dump, self).build_parser(
-            description="Print the contents of a dataset")
+            description="Print the contents of a dataset.")
         parser.add_argument('-A', '--onlyattr',
             help="Print only attributes",
             action="store_true")
@@ -119,7 +119,7 @@ class Attrs(Command):
     def build_parser(self):
         parser = super(Attrs, self).build_parser(
             description="Print attributes of the current group or a given "
-            "object")
+            "object.")
         parser.add_argument('object', nargs='?')
         return parser
 

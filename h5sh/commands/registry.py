@@ -4,7 +4,10 @@
 
 from __future__ import (division, absolute_import, print_function, )
 #-----------------------------------------------------------------------------#
+import sys
 from functools import wraps
+
+DEFINE_PARSER = ('argparse' in sys.modules)
 
 class CommandRegistry(object):
     def __init__(self, commands=None):
@@ -18,14 +21,31 @@ class CommandRegistry(object):
     def insert(self, key, func):
         if key in self.commands:
             raise KeyError("Duplicate command name '{}'".format(key))
+
+        if DEFINE_PARSER:
+            try:
+                parser = func.parser
+            except AttributeError:
+                pass
+            else:
+                self._add_parser_cmd(key, parser)
+
         self.commands[key] = func
+
+    def _add_parser_cmd(self, name, parser):
+        """Define a free function that returns a function's parser.
+
+        This is used by the 'sphinx-argparse' documentation generator.
+        """
+        module = sys.modules[__name__]
+        attrname = "get_parser_" + name
+        setattr(module, attrname, lambda: parser)
 
     def __iter__(self):
         return iter(self.commands)
 
     def __getitem__(self, key):
         return self.commands[key]
-
 
 class RegisterCommand(object):
     def __init__(self, registry):

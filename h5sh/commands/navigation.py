@@ -18,7 +18,7 @@ class Chdir(Command):
 
     def build_parser(self):
         parser = super(Chdir, self).build_parser(
-            description="Change the current HDF5 group")
+            description="Change the current HDF5 group.")
         parser.add_argument('group', nargs='?')
         return parser
 
@@ -38,7 +38,7 @@ class Up(object):
     def __init__(self, count):
         self.name = "u" + "p" * count
         self.path = "../" * count
-        self.description = "Traverse up {:d} directories".format(count)
+        self.description = "Traverse up {:d} directories.".format(count)
 
     def __call__(self, state):
         cd(state, self.path)
@@ -52,9 +52,11 @@ class Listdir(Command):
 
     def build_parser(self):
         parser = super(Listdir, self).build_parser(
-            description="List items in the current group")
-        parser.add_argument('-l', dest='long', action='store_true')
-        parser.add_argument('-1', dest='oneline', action='store_true')
+            description="List items in the current group.")
+        parser.add_argument('-l', dest='long', action='store_true',
+            help="Print attributes as well as names")
+        parser.add_argument('-1', dest='oneline', action='store_true',
+            help="Print one entry per line")
         parser.add_argument('group', nargs='?')
         return parser
 

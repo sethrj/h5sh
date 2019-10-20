@@ -43,14 +43,14 @@ NULL_CMD = null
 
 ###############################################################################
 
-@register(name="exit", description="Exit h5sh")
+@register(name="exit", description="Exit h5sh.")
 def _exit(state):
     sys.exit(0)
 
 ###############################################################################
 
 @register(name='help',
-          description="List available commands")
+          description="List available commands.")
 def _help(state):
     print("Available commands:")
     keys = sorted(k for k in COMMANDS if not k.startswith("__"))

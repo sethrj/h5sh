@@ -38,17 +38,20 @@ class MiniArgParser(ArgumentParser):
 
     def add_dataset_argument(self, *args, **kwargs):
         self.dataset = True
+        kwargs.setdefault('help', "Dataset name")
         return super(MiniArgParser, self).add_argument('dataset',
                 *args, **kwargs)
 
     def add_group_argument(self, *args, **kwargs):
         self.group = True
+        kwargs.setdefault('help', "Group name")
         return super(MiniArgParser, self).add_argument('group',
                 *args, **kwargs)
 
     def add_object_argument(self, *args, **kwargs):
         self.dataset = True
         self.group = True
+        kwargs.setdefault('help', "Object name")
         return super(MiniArgParser, self).add_argument('obj',
                 metavar='object', *args, **kwargs)
 

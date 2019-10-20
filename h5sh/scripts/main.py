@@ -5,8 +5,8 @@ from h5sh import __version__
 import sys
 
 def run(inp, debug=False):
-    from .state import State
-    from .console import Console
+    from h5sh.state import State
+    from h5sh.console import Console
     with State(inp) as state:
         console = Console(state)
         console.debug = debug
