@@ -43,7 +43,7 @@ setup(
     long_description=readme + "\n\n" + history,
     keywords="h5sh",
     name="h5sh",
-    packages=find_packages(include=["h5sh"]),
+    packages=find_packages(include=["h5sh", "h5sh.*"]),
     setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
