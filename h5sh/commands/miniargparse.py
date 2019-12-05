@@ -7,8 +7,10 @@ from __future__ import (division, absolute_import, print_function, )
 from argparse import ArgumentParser
 ###############################################################################
 
+
 class MiniSystemExit(BaseException):
     pass
+
 
 class MiniArgParser(ArgumentParser):
     """Argument parser that just returns/raises instead of exiting.
@@ -16,6 +18,7 @@ class MiniArgParser(ArgumentParser):
     This utility class is used to parse arguments without actually exiting the
     python shell.
     """
+
     def __init__(self, *args, **kwargs):
         self.options = []
         self.dataset = False
@@ -40,20 +43,20 @@ class MiniArgParser(ArgumentParser):
         self.dataset = True
         kwargs.setdefault('help', "Dataset name")
         return super(MiniArgParser, self).add_argument('dataset',
-                *args, **kwargs)
+                                                       *args, **kwargs)
 
     def add_group_argument(self, *args, **kwargs):
         self.group = True
         kwargs.setdefault('help', "Group name")
         return super(MiniArgParser, self).add_argument('group',
-                *args, **kwargs)
+                                                       *args, **kwargs)
 
     def add_object_argument(self, *args, **kwargs):
         self.dataset = True
         self.group = True
         kwargs.setdefault('help', "Object name")
         return super(MiniArgParser, self).add_argument('obj',
-                metavar='object', *args, **kwargs)
+                                                       metavar='object', *args, **kwargs)
 
     def add_argument(self, name, *args, **kwargs):
         if name == 'dataset':
@@ -65,4 +68,3 @@ class MiniArgParser(ArgumentParser):
         args = (name,) + args
         self.options.extend(opt for opt in args if opt.startswith('-'))
         return super(MiniArgParser, self).add_argument(*args, **kwargs)
-

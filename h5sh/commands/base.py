@@ -6,6 +6,7 @@ from __future__ import (division, absolute_import, print_function, )
 #-----------------------------------------------------------------------------#
 from .miniargparse import MiniArgParser, MiniSystemExit
 
+
 class Command(object):
     """Utility class for constructing a command that takes arguments.
     """
@@ -53,4 +54,3 @@ class Command(object):
         if not desc:
             raise AttributeError(desc)
         return desc
-

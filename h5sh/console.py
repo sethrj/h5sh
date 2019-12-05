@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import (division, absolute_import, print_function,
-        unicode_literals)
+                        unicode_literals)
 from six.moves import input
 #-----------------------------------------------------------------------------#
 from prompt_toolkit import PromptSession
@@ -17,6 +17,7 @@ from .utils import shlex_split
 
 ###############################################################################
 
+
 def _get_console_lexer():
     try:
         from prompt_toolkit.lexers import PygmentsLexer
@@ -24,6 +25,7 @@ def _get_console_lexer():
     except ImportError:
         return None
     return PygmentsLexer(BashLexer)
+
 
 class CommandCompleter(Completer):
     def __init__(self, state):
@@ -57,6 +59,7 @@ class CommandCompleter(Completer):
             if arg.startswith(preceding_word):
                 yield Completion(arg, pos)
 
+
 class Console(object):
     def __init__(self, state):
         # Command-line state
@@ -65,8 +68,8 @@ class Console(object):
         self.debug = False
         # Prompt session
         self.session = PromptSession(lexer=_get_console_lexer(),
-                style=Style(get_style_rules()),
-                completer=CommandCompleter(state))
+                                     style=Style(get_style_rules()),
+                                     completer=CommandCompleter(state))
         # prompt_toolkit Output class
         self.output = self.session.app.output
 
@@ -117,4 +120,3 @@ class Console(object):
                 import logging as log
                 log.exception(e)
                 continue
-

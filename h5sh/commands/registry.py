@@ -9,6 +9,7 @@ from functools import wraps
 
 DEFINE_PARSER = ('argparse' in sys.modules)
 
+
 class CommandRegistry(object):
     def __init__(self, commands=None):
         if commands is None:
@@ -46,6 +47,7 @@ class CommandRegistry(object):
 
     def __getitem__(self, key):
         return self.commands[key]
+
 
 class RegisterCommand(object):
     def __init__(self, registry):
@@ -90,4 +92,3 @@ COMMANDS = CommandRegistry()
 
 # Register in the list of commands
 register = RegisterCommand(COMMANDS)
-

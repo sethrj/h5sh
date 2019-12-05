@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import (division, absolute_import, print_function,
-        unicode_literals)
+                        unicode_literals)
 #-----------------------------------------------------------------------------#
 from contextlib import contextmanager
 import h5py
@@ -12,6 +12,7 @@ from .utils import abspath
 from .styles import (styled_filename, HDF5_GROUP, PROMPT_TOKEN)
 
 ###############################################################################
+
 
 class State(object):
     """The state of the current "shell".
@@ -99,10 +100,10 @@ class State(object):
         max_filename_len = cols // 2 - (len(cwd) + 4)
 
         result = styled_filename(self.filename, max_filename_len) + [
-                ('', ":"),
-                (HDF5_GROUP, self.cwd),
-                (PROMPT_TOKEN, ' > '),
-                ]
+            ('', ":"),
+            (HDF5_GROUP, self.cwd),
+            (PROMPT_TOKEN, ' > '),
+        ]
 
         return result
 

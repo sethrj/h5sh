@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import (division, absolute_import, print_function,
-        unicode_literals)
+                        unicode_literals)
 from h5sh import __version__
 import sys
+
 
 def run(inp, debug=False):
     from h5sh.state import State
@@ -11,6 +12,7 @@ def run(inp, debug=False):
         console = Console(state)
         console.debug = debug
         console.interact()
+
 
 def main(argv=None):
     from argparse import ArgumentParser
@@ -55,6 +57,7 @@ def main(argv=None):
 
     # Run the program
     run(**vars(args))
+
 
 if __name__ == '__main__':
     main()

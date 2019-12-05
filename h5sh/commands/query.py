@@ -14,6 +14,7 @@ from .base import Command
 from .registry import register
 ###############################################################################
 
+
 class Dump(Command):
     name = "dump"
     STDOUT = "STDOUT"
@@ -22,19 +23,19 @@ class Dump(Command):
         parser = super(Dump, self).build_parser(
             description="Print the contents of a dataset.")
         parser.add_argument('-A', '--onlyattr',
-            help="Print only attributes",
-            action="store_true")
+                            help="Print only attributes",
+                            action="store_true")
         parser.add_argument('-p', '--precision', type=int, default=4,
-            help="Floating point precision")
+                            help="Floating point precision")
         parser.add_argument('-t', '--threshold', type=int, default=50,
-            help="Number of values to display")
-        parser.add_argument( '--suppress_small',
-            help="Print very small numbers as zero",
-            action="store_true")
+                            help="Number of values to display")
+        parser.add_argument('--suppress_small',
+                            help="Print very small numbers as zero",
+                            action="store_true")
         parser.add_argument('dataset', help="Dataset to print")
         parser.add_argument('-o', '--out',
-            help="File to save output",
-            default=Dump.STDOUT)
+                            help="File to save output",
+                            default=Dump.STDOUT)
         return parser
 
     def execute(self, state, dataset, out, **kwargs):
@@ -113,6 +114,7 @@ register.instance(Dump)
 
 ###############################################################################
 
+
 class Attrs(Command):
     name = "attr"
 
@@ -139,5 +141,5 @@ class Attrs(Command):
             v = to_native_str(attrs[k])
             print(fmt(k, v))
 
-register.instance(Attrs)
 
+register.instance(Attrs)
