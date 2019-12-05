@@ -4,6 +4,7 @@ import pytest
 
 from h5sh.state import State
 import h5sh.commands as module
+from six import PY2
 
 @pytest.fixture
 def tmpstate(example_h5_filename):
@@ -83,6 +84,9 @@ def test_dump(tmpstate, capsys, tmpdir):
         cmd(tmpstate, 'group')
 
     cmd(tmpstate, '/group/scalar')
+    out = capsys.readouterr().out
+    if PY2:
+        out = out.replace("u'", "'")
     assert """\
 Dataset: /group/scalar
 Shape: scalar
@@ -91,16 +95,19 @@ Attributes:
 {'cats': array(['Kali', 'Bustopher Jones'], dtype=object)}
 ---
 1.23
-""" == capsys.readouterr().out
+""" == out
 
     cmd(tmpstate, '/group/scalar', "-A")
+    out = capsys.readouterr().out
+    if PY2:
+        out = out.replace("u'", "'")
     assert """\
 Dataset: /group/scalar
 Shape: scalar
 Type: float64
 Attributes:
 {'cats': array(['Kali', 'Bustopher Jones'], dtype=object)}
-""" == capsys.readouterr().out
+""" == out
 
     cmd(tmpstate, '/group/vector')
     assert """\
