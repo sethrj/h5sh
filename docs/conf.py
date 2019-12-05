@@ -34,6 +34,17 @@ import h5sh
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
 
+# Add argparse autogeneration
+try:
+    import sphinxarg
+except ImportError:
+    print("Can't import sphinxarg: some command line options will not be "
+            "displayed.")
+    print("Download and install using `pip install sphinx-argparse`")
+else:
+    print("Imported sphinxarg")
+    extensions.append("sphinxarg.ext")
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -95,7 +106,7 @@ html_theme = 'alabaster'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 
 # -- Options for HTMLHelp output ---------------------------------------

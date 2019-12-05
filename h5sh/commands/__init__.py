@@ -11,4 +11,3 @@ from .registry import COMMANDS, register
 from . import navigation
 from . import query
 from . import system
-

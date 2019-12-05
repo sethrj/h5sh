@@ -14,27 +14,28 @@ from .base import Command
 from .registry import register
 ###############################################################################
 
+
 class Dump(Command):
     name = "dump"
     STDOUT = "STDOUT"
 
     def build_parser(self):
         parser = super(Dump, self).build_parser(
-            description="Print the contents of a dataset")
+            description="Print the contents of a dataset.")
         parser.add_argument('-A', '--onlyattr',
-            help="Print only attributes",
-            action="store_true")
+                            help="Print only attributes",
+                            action="store_true")
         parser.add_argument('-p', '--precision', type=int, default=4,
-            help="Floating point precision")
+                            help="Floating point precision")
         parser.add_argument('-t', '--threshold', type=int, default=50,
-            help="Number of values to display")
-        parser.add_argument( '--suppress_small',
-            help="Print very small numbers as zero",
-            action="store_true")
+                            help="Number of values to display")
+        parser.add_argument('--suppress_small',
+                            help="Print very small numbers as zero",
+                            action="store_true")
         parser.add_argument('dataset', help="Dataset to print")
         parser.add_argument('-o', '--out',
-            help="File to save output",
-            default=Dump.STDOUT)
+                            help="File to save output",
+                            default=Dump.STDOUT)
         return parser
 
     def execute(self, state, dataset, out, **kwargs):
@@ -113,13 +114,14 @@ register.instance(Dump)
 
 ###############################################################################
 
+
 class Attrs(Command):
     name = "attr"
 
     def build_parser(self):
         parser = super(Attrs, self).build_parser(
             description="Print attributes of the current group or a given "
-            "object")
+            "object.")
         parser.add_argument('object', nargs='?')
         return parser
 
@@ -139,5 +141,5 @@ class Attrs(Command):
             v = to_native_str(attrs[k])
             print(fmt(k, v))
 
-register.instance(Attrs)
 
+register.instance(Attrs)

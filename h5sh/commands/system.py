@@ -13,6 +13,7 @@ from .base import Command
 from .registry import register, COMMANDS
 ###############################################################################
 
+
 class Interrupt(object):
     name = "__INTERRUPT__"
     warning_time = 2.0
@@ -35,22 +36,26 @@ INTERRUPT_CMD = register.instance(Interrupt)
 
 ###############################################################################
 
+
 @register(name="__NULL__")
 def null(state):
     pass
+
 
 NULL_CMD = null
 
 ###############################################################################
 
-@register(name="exit", description="Exit h5sh")
+
+@register(name="exit", description="Exit h5sh.")
 def _exit(state):
     sys.exit(0)
 
 ###############################################################################
 
+
 @register(name='help',
-          description="List available commands")
+          description="List available commands.")
 def _help(state):
     print("Available commands:")
     keys = sorted(k for k in COMMANDS if not k.startswith("__"))
@@ -66,7 +71,7 @@ def _help(state):
 
 ###############################################################################
 
+
 @register("Print the name of the file being examined")
 def filename(state):
     print(state.f.filename)
-

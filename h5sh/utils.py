@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import (division, absolute_import, print_function,
-        unicode_literals)
+                        unicode_literals)
 from six import PY3
 #-----------------------------------------------------------------------------#
 import h5py
@@ -12,6 +12,7 @@ import shlex
 ###############################################################################
 # STRING UTILITIES
 ###############################################################################
+
 
 def shlex_split(s, comments=False, posix=True):
     """
@@ -37,6 +38,7 @@ def shlex_split(s, comments=False, posix=True):
                 break
         result.append(tok)
     return result
+
 
 def abspath(newpath, curpath):
     """Return the absolute path to the given 'newpath'.
@@ -119,6 +121,7 @@ else:
 # ARRAY UTILITIES
 ###############################################################################
 
+
 def vectorized(dtype='O', nargin=1, nargout=1):
     """Decorator function for applying a python function to an array.
 
@@ -185,6 +188,7 @@ def format_shape(shape):
     return _MULT_SYMBOL.join(str(i) if i is not None else _INF_SYMBOL
                              for i in shape)
 
+
 def items(group):
     """Generator for key/value pairs in a group, returning links where
     possible.
@@ -199,12 +203,13 @@ def items(group):
             value = group[key]
         yield (key, value)
 
+
 def short_describe(obj):
     """Return a short description of the given group/dataset.
     """
     if isinstance(obj, h5py.Group):
         return "Group ({:d} item{:s})".format(len(obj),
-                "s" if len(obj) != 1 else "")
+                                              "s" if len(obj) != 1 else "")
     elif isinstance(obj, h5py.Dataset):
         return "Dataset ({:s}: {:s})".format(
             obj.dtype.char, format_shape(obj.shape))
@@ -220,6 +225,7 @@ def short_describe(obj):
     else:
         # Unknown
         return str(obj.__class__)
+
 
 def extract(data):
     """Extract data from h5py data objects.
@@ -256,4 +262,3 @@ def extract(data):
             data = to_native_str(data)
 
     return data
-

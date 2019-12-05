@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import (division, absolute_import, print_function,
-        unicode_literals)
+                        unicode_literals)
 #-----------------------------------------------------------------------------#
 import os
 
@@ -11,14 +11,16 @@ HDF5_GROUP = 'class:hdf5.group'
 PROMPT_TOKEN = 'class:prompt'
 
 STYLES = [
-        (FILENAME, 'fg:cyan'),
-        (TRUNC_FILENAME, 'fg:gray'),
-        (HDF5_GROUP, 'fg:green'),
-        (PROMPT_TOKEN, 'bold'),
-        ]
+    (FILENAME, 'fg:cyan'),
+    (TRUNC_FILENAME, 'fg:gray'),
+    (HDF5_GROUP, 'fg:green'),
+    (PROMPT_TOKEN, 'bold'),
+]
+
 
 def get_style_rules():
-    return [(k.replace('class:',''), v) for (k,v) in STYLES]
+    return [(k.replace('class:', ''), v) for (k, v) in STYLES]
+
 
 def styled_filename(filename, width=32):
     """Filename, truncated to the given width, as a list to be wrapped by
@@ -49,8 +51,7 @@ def styled_filename(filename, width=32):
     # with minimum in case width < 16
     half_width = max(4, (width - 7) // 2)
     result = dirname + [
-              (FILENAME, basename[:half_width]),
-              (TRUNC_FILENAME, "..."),
-              (FILENAME, basename[-half_width:])]
+        (FILENAME, basename[:half_width]),
+        (TRUNC_FILENAME, "..."),
+        (FILENAME, basename[-half_width:])]
     return result
-
