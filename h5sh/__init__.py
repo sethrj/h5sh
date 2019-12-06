@@ -4,6 +4,6 @@
 
 __author__ = "Seth R Johnson"
 __email__ = 'johnsonsr@ornl.gov'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 DEBUG = False

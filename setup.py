@@ -11,14 +11,6 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-setup_requirements = [
-    "pytest-runner",
-]
-
-test_requirements = [
-    "pytest",
-]
-
 setup(
     author="Seth Robert Johnson",
     author_email="johnsonsr@ornl.gov",
@@ -38,16 +30,21 @@ setup(
     description="Fast shell-like tool for interacting with HDF5 files.",
     entry_points={"console_scripts": ["h5sh=h5sh.scripts.main:main"],},
     include_package_data=True,
-    install_requires=["h5py>=2.7.1", "prompt-toolkit>=2.0", "numpy>=1.15", "pygments"],
+    install_requires=[
+        "h5py>=2.7.1",
+        "prompt-toolkit>=2.0",
+        "numpy>=1.15",
+        "pygments",
+        "six",
+    ],
     license="BSD license",
     long_description=readme + "\n\n" + history,
     keywords="h5sh",
     name="h5sh",
     packages=find_packages(include=["h5sh", "h5sh.*"]),
-    setup_requires=setup_requirements,
     test_suite="tests",
-    tests_require=test_requirements,
+    tests_require=["pytest"],
     url="https://github.com/sethrj/h5sh",
-    version="0.1.0",
+    version="0.1.1",
     zip_safe=False,
 )
