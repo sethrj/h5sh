@@ -12,6 +12,7 @@ from time import time
 from h5sh.utils import (make_column_kv_fmt, extract, format_shape)
 from .base import Command
 from .registry import register
+from ..utils import to_native_str
 ###############################################################################
 
 
