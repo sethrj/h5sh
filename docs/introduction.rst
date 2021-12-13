@@ -20,8 +20,8 @@ naturally explore arbitrarily large HDF5 data files.
 Installation
 ============
 
-As of this writing, ``h5sh`` has not been submitted to PyPI, so it must be
-installed from source.
+The h5sh utility can be installed through python's pip package manager or
+manually from source.
 
 Stable release
 --------------
